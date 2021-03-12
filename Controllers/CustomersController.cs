@@ -109,7 +109,6 @@ namespace ShopsRUs.Controllers
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Phone = dto.Phone
-                //Id = Guid.NewGuid()
             };
 
             _context.Customer.Add(customer);

@@ -12,6 +12,8 @@ namespace ShopsRUs.Model
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key]
         public Guid Id { set; get; }
+
+        [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 
     }
