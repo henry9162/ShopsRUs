@@ -92,6 +92,21 @@ namespace ShopsRUs.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "CustomerType",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("42597c90-ad38-42e3-9423-6180735a0895"), "Affiliate" });
+
+            migrationBuilder.InsertData(
+                table: "CustomerType",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("1c8ac228-5531-44fc-8f32-b3ae9feb2ce6"), "Employee" });
+
+            migrationBuilder.InsertData(
+                table: "CustomerType",
+                columns: new[] { "Id", "Name" },
+                values: new object[] { new Guid("a97c408a-7991-412b-b686-8cf2cdfd9b7c"), "Customer" });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Customer_CUstomerTypeID",
                 table: "Customer",

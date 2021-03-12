@@ -55,41 +55,6 @@ namespace ShopsRUs.Migrations
                     b.HasIndex("CUstomerTypeID");
 
                     b.ToTable("Customer");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("f441f952-0345-43b1-8e0e-6df94d6f2d4a"),
-                            Address = "Lagos",
-                            CUstomerTypeID = new Guid("42597c90-ad38-42e3-9423-6180735a0895"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "henimastic@gmail.com",
-                            FirstName = "Henry",
-                            LastName = "Ekwonwa",
-                            Phone = "08125234436"
-                        },
-                        new
-                        {
-                            Id = new Guid("5540638b-2410-445a-be25-cd2dbe584ad6"),
-                            Address = "Lagos",
-                            CUstomerTypeID = new Guid("1c8ac228-5531-44fc-8f32-b3ae9feb2ce6"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "danielamoko@gmail.com",
-                            FirstName = "Daniel",
-                            LastName = "Amoko",
-                            Phone = "08125234433"
-                        },
-                        new
-                        {
-                            Id = new Guid("5a3f4b12-3067-4609-aeb2-66dd86ba508e"),
-                            Address = "Lagos",
-                            CUstomerTypeID = new Guid("a97c408a-7991-412b-b686-8cf2cdfd9b7c"),
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Email = "somto@gmail.com",
-                            FirstName = "Somto",
-                            LastName = "Amaugo",
-                            Phone = "08125244436"
-                        });
                 });
 
             modelBuilder.Entity("ShopsRUs.Model.CustomerType", b =>
@@ -155,52 +120,6 @@ namespace ShopsRUs.Migrations
                     b.HasIndex("CustomerTypeId");
 
                     b.ToTable("Discount");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = new Guid("e14ad1cb-cd48-433f-96d2-849c30bbd184"),
-                            CustomerTypeId = new Guid("42597c90-ad38-42e3-9423-6180735a0895"),
-                            CustomerorBIllType = true,
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Discount for Affiliate",
-                            Key = "Affiliate",
-                            PercentOrFixed = true,
-                            Value = 0.1m
-                        },
-                        new
-                        {
-                            Id = new Guid("456d0c56-fced-4324-8e10-15c85aa3d5cb"),
-                            CustomerTypeId = new Guid("1c8ac228-5531-44fc-8f32-b3ae9feb2ce6"),
-                            CustomerorBIllType = true,
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Discount for Employee",
-                            Key = "Employee",
-                            PercentOrFixed = true,
-                            Value = 0.3m
-                        },
-                        new
-                        {
-                            Id = new Guid("e92e4be2-7fbd-44f4-b5b6-1006b218fc5d"),
-                            CustomerTypeId = new Guid("a97c408a-7991-412b-b686-8cf2cdfd9b7c"),
-                            CustomerorBIllType = true,
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "Discount for Customers that has spent over 2 years",
-                            Key = "2 years",
-                            PercentOrFixed = true,
-                            Value = 0.05m
-                        },
-                        new
-                        {
-                            Id = new Guid("12858bf9-d0ea-4da8-b0d5-d28e955ac40b"),
-                            CustomerTypeId = new Guid("00000000-0000-0000-0000-000000000000"),
-                            CustomerorBIllType = false,
-                            DateCreated = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
-                            Description = "For every $100, customer get $5 discount",
-                            Key = "100 dollars",
-                            PercentOrFixed = false,
-                            Value = 5m
-                        });
                 });
 
             modelBuilder.Entity("ShopsRUs.Model.Invoice", b =>

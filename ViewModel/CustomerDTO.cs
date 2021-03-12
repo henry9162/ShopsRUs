@@ -25,6 +25,6 @@ namespace ShopsRUs.ViewModel
         public string Email { get; set; }
         public Guid CUstomerTypeID { get; set; }
 
-        public DateTime DateCreated { get; set; }
+        //public DateTime DateCreated { get; set; }
     }
 }

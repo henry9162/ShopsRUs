@@ -43,18 +43,39 @@ namespace ShopsRUs.Controllers
             return customer;
         }
 
-        // PUT: api/Customers/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(Guid id, Customer customer)
+        // GET: api/Customers/5
+        [HttpGet("getCustomerByName/{name}")]
+        public async Task<ActionResult<Customer>> GetCustomer(String name)
         {
-            if (id != customer.Id)
+            var customer = await _context.Customer.Where(c=>c.FirstName.ToLower() == name || c.LastName.ToLower() == name ).FirstOrDefaultAsync();
+
+            if (customer == null)
+            {
+                return NotFound();
+            }
+
+            return customer;
+        }
+
+        // PUT: api/Customers/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutCustomer(Guid id, CustomerDTO customer)
+        {
+            var customerExist = await _context.Customer.Where(c => c.Id == id).FirstOrDefaultAsync();
+
+            if (customerExist == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customer).State = EntityState.Modified;
+            customerExist.FirstName = customer.FirstName;
+            customerExist.LastName = customer.LastName;
+            customerExist.Email = customer.Email;
+            customerExist.Address = customer.Address;
+            customerExist.Phone = customer.Phone;
+            customerExist.CUstomerTypeID = customer.CUstomerTypeID;
+
+            _context.Update(customerExist);
 
             try
             {
@@ -76,8 +97,6 @@ namespace ShopsRUs.Controllers
         }
 
         // POST: api/Customers
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<Customer>> PostCustomer(CustomerDTO dto)
         {
@@ -89,8 +108,8 @@ namespace ShopsRUs.Controllers
                 Email = dto.Email,
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
-                Phone = dto.Phone,
-                Id = Guid.NewGuid()
+                Phone = dto.Phone
+                //Id = Guid.NewGuid()
             };
 
             _context.Customer.Add(customer);
@@ -112,7 +131,7 @@ namespace ShopsRUs.Controllers
             _context.Customer.Remove(customer);
             await _context.SaveChangesAsync();
 
-            return customer;
+            return Ok("Successfully deleted customer");
         }
 
         private bool CustomerExists(Guid id)

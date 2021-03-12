@@ -12,6 +12,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShopsRUs.Data;
+using ShopsRUs.Data.Implementation;
 
 namespace ShopsRUs
 {
@@ -29,6 +30,7 @@ namespace ShopsRUs
         {
             services.AddControllers();
             services.AddSwaggerGen();
+            services.AddScoped<ICustomer, MockICustomer>();
 
             services.AddDbContext<ShopsRUsContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ShopsRUsContext")));

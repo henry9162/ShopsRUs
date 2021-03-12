@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopsRUs.Data;
 using ShopsRUs.Model;
+using ShopsRUs.ViewModel;
 
 namespace ShopsRUs.Controllers
 {
@@ -42,18 +43,41 @@ namespace ShopsRUs.Controllers
             return discount;
         }
 
+        [HttpGet("getDiscountByType/{id}")]
+        public async Task<ActionResult<Discount>> GetDiscountByType(Guid id)
+        {
+            var discount = await _context.Discount.Where(d=>d.CustomerTypeId == id).FirstOrDefaultAsync();
+
+            if (discount == null)
+            {
+                return NotFound();
+            }
+
+            return discount;
+        }
+
         // PUT: api/Discounts/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutDiscount(Guid id, Discount discount)
+        public async Task<IActionResult> PutDiscount(Guid id, DiscountDTO discount)
         {
-            if (id != discount.Id)
+            var updatedDiscount = await _context.Discount.FindAsync(id);
+            if (updatedDiscount == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(discount).State = EntityState.Modified;
+            updatedDiscount.CustomerTypeId = discount.CustomerTypeId;
+            updatedDiscount.Description = discount.Description;
+            updatedDiscount.CustomerorBIllType = discount.CustomerorBIllType;
+            updatedDiscount.Key = discount.Key;
+            updatedDiscount.Value = discount.Value;
+            updatedDiscount.PercentOrFixed = discount.PercentOrFixed;
+
+            _context.Update(updatedDiscount);
+
+            //_context.Entry(discount).State = EntityState.Modified;
 
             try
             {
@@ -78,12 +102,22 @@ namespace ShopsRUs.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<Discount>> PostDiscount(Discount discount)
+        public async Task<ActionResult<Discount>> PostDiscount(DiscountDTO discount)
         {
-            _context.Discount.Add(discount);
+            var newDiscount = new Discount()
+            {
+                CustomerTypeId = discount.CustomerTypeId,
+                Key = discount.Key,
+                Value = discount.Value,
+                PercentOrFixed = discount.PercentOrFixed,
+                CustomerorBIllType = discount.CustomerorBIllType,
+                Description = discount.Description
+            };
+
+            _context.Discount.Add(newDiscount);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetDiscount", new { id = discount.Id }, discount);
+            return CreatedAtAction("GetDiscount", new { id = newDiscount.Id }, newDiscount);
         }
 
         // DELETE: api/Discounts/5
@@ -99,7 +133,7 @@ namespace ShopsRUs.Controllers
             _context.Discount.Remove(discount);
             await _context.SaveChangesAsync();
 
-            return discount;
+            return Ok("Deleted discount successfully");
         }
 
         private bool DiscountExists(Guid id)

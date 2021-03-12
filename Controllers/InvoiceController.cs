@@ -35,10 +35,10 @@ namespace ShopsRUs.Controllers
                     return BadRequest("CustomerId and amount cannot be empty");
                 }
                 //use customer type to get the discount by customer
-                var customerDetails = _context.Customer.Include(s => s.CustomerType).Where(x => x.Id == Bill.CustomerId).FirstOrDefault();
+                var customerDetails = await _context.Customer.Include(s => s.CustomerType).Where(x => x.Id == Bill.CustomerId).FirstOrDefaultAsync();
                 if (customerDetails != null)
                 {
-                    var discount = _context.Discount.Where(c => c.CustomerTypeId == customerDetails.CUstomerTypeID).FirstOrDefault();
+                    var discount =  _context.Discount.Where(c => c.CustomerTypeId == customerDetails.CUstomerTypeID).FirstOrDefault();
 
                     if (discount != null)
                     {
@@ -54,7 +54,7 @@ namespace ShopsRUs.Controllers
                         }
                         else
                         {
-                            discount = _context.Discount.Where(s => s.CustomerTypeId == null).FirstOrDefault();
+                            discount =  _context.Discount.Where(s => s.CustomerTypeId == null).FirstOrDefault();
                             int amount = (int)(Bill.TotalAmount / Convert.ToDecimal(discount.Key));
                             balanceDue = Bill.TotalAmount - ((discount.Value * amount));
 

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopsRUs.Data;
 using ShopsRUs.Model;
+using ShopsRUs.ViewModel;
 
 namespace ShopsRUs.Controllers
 {
@@ -46,14 +47,18 @@ namespace ShopsRUs.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomerType(Guid id, CustomerType customerType)
+        public async Task<IActionResult> PutCustomerType(Guid id, CustomerTypeDTO customerType)
         {
-            if (id != customerType.Id)
+            var type = await _context.CustomerType.FindAsync(id);
+            if (type == null)
             {
                 return BadRequest();
             }
 
-            _context.Entry(customerType).State = EntityState.Modified;
+            type.Name = customerType.Name;
+            _context.Update(type);
+
+            //_context.Entry(customerType).State = EntityState.Modified;
 
             try
             {
@@ -78,12 +83,16 @@ namespace ShopsRUs.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerType customerType)
+        public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerTypeDTO customerType)
         {
-            _context.CustomerType.Add(customerType);
+            var type = new CustomerType()
+            {
+                Name = customerType.Name
+            };
+            _context.CustomerType.Add(type);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCustomerType", new { id = customerType.Id }, customerType);
+            return CreatedAtAction("GetCustomerType", new { id = type.Id }, type);
         }
 
         // DELETE: api/CustomerTypes/5
@@ -99,7 +108,7 @@ namespace ShopsRUs.Controllers
             _context.CustomerType.Remove(customerType);
             await _context.SaveChangesAsync();
 
-            return customerType;
+            return Ok("Deleted type successfully");
         }
 
         private bool CustomerTypeExists(Guid id)
