@@ -124,7 +124,7 @@ namespace ShopsRUs.Migrations
                     b.Property<double>("TotalAmount")
                         .HasColumnType("float");
 
-                    b.Property<double>("TotalBillAmount")
+                    b.Property<double>("TotalInvoiceAmount")
                         .HasColumnType("float");
 
                     b.HasKey("Id");

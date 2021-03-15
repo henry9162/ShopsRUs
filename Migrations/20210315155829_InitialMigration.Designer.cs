@@ -10,7 +10,7 @@ using ShopsRUs.Data;
 namespace ShopsRUs.Migrations
 {
     [DbContext(typeof(ShopsRUsContext))]
-    [Migration("20210314172647_InitialMigration")]
+    [Migration("20210315155829_InitialMigration")]
     partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -124,6 +124,9 @@ namespace ShopsRUs.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<double>("TotalAmount")
+                        .HasColumnType("float");
+
+                    b.Property<double>("TotalInvoiceAmount")
                         .HasColumnType("float");
 
                     b.HasKey("Id");

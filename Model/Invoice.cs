@@ -13,7 +13,7 @@ namespace ShopsRUs.Model
         public Guid CustomerId { get; set; }
         public Customer Customer { get; set; }
         public double TotalAmount { get; set; }
-        public double TotalBillAmount { get; set; }
+        public double TotalInvoiceAmount { get; set; }
         public DateTime DateCreated { get; set; }
     }
 }

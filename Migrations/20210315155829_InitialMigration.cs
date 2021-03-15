@@ -74,6 +74,7 @@ namespace ShopsRUs.Migrations
                     Id = table.Column<Guid>(nullable: false),
                     CustomerId = table.Column<Guid>(nullable: false),
                     TotalAmount = table.Column<double>(nullable: false),
+                    TotalInvoiceAmount = table.Column<double>(nullable: false),
                     DateCreated = table.Column<DateTime>(nullable: false)
                 },
                 constraints: table =>

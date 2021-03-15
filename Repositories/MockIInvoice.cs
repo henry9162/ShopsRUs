@@ -40,7 +40,7 @@ namespace ShopsRUs.Repositories
             {
                 CustomerId = Bill.CustomerId,
                 TotalAmount = (int)Convert.ToDecimal(Bill.TotalAmount),
-                TotalBillAmount = (int) Convert.ToDecimal(0.0m),
+                TotalInvoiceAmount = (int) Convert.ToDecimal(0.0m),
                 DateCreated = DateTime.Now
             };
 
@@ -60,7 +60,7 @@ namespace ShopsRUs.Repositories
                     {
                         balanceDue = Bill.TotalAmount - (discount.Value * Bill.TotalAmount);
 
-                        invoice.TotalBillAmount = (int)Convert.ToDecimal(balanceDue);
+                        invoice.TotalInvoiceAmount = (int)Convert.ToDecimal(balanceDue);
 
                         return await saveChanges(invoice);
                     }
@@ -70,7 +70,7 @@ namespace ShopsRUs.Repositories
                         int amount = (int)(Bill.TotalAmount / HardCodes.DiscountFrequency.Value);
                         balanceDue = Bill.TotalAmount - ((discount.Value * amount));
 
-                        invoice.TotalBillAmount = (int)Convert.ToDecimal(balanceDue);
+                        invoice.TotalInvoiceAmount = (int)Convert.ToDecimal(balanceDue);
 
                         return await saveChanges(invoice);
                     }
