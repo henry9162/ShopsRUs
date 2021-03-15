@@ -28,56 +28,53 @@ A test case by Habaripay
 ## Seeding Database 
 - Three (3) API endpoint for CustomerType, Customer, and Discount has been created to seed static data into the DB for test purposes.
 - The API names are CustomerTypeSeeder, CustomerSeeder, and DiscountSeeder.
-- After the application is served, seeding should be done first in this particular order: 
-1. CustomerTypeSeeder
-2. CustomerSeeder
-3. DiscountSeeder
+- After the application is served, seeding should be done first in this particular order: **CustomerTypeSeeder** - **CustomerSeeder** - **DiscountSeeder**
 
 ## Database Design 
 For the purpose of this challenge, Four (4) database tables were created which are Customer, CustomerType, Discount, and Invoice Tables.
 Below are descriptions of the table relationships:
 
 ### Table Relationship
-- A ONE-to-ONE relationship exist betwen Customer and CustomerType such that a customer can only have one (1) customerType.
-- Also a ONE-to-ONE relationship exist between Discount and CustomerType such that a discount can only belong to a specific customerType.
-- Finally, a ONE-to-ONE relationship exist between Invoice and Customer such that an invoice can only belong to a specific customer.
+- A **ONE-to-ONE** relationship exist betwen Customer and CustomerType such that a customer can only have one (1) customerType.
+- Also a **ONE-to-ONE** relationship exist between Discount and CustomerType such that a discount can only belong to a specific customerType.
+- Finally, a **ONE-to-ONE** relationship exist between Invoice and Customer such that an invoice can only belong to a specific customer.
 
 ### Customer Table
 The customer table comprises of the following entities
-- Id: A Guid that serves as primary key.
-- FirstName: A string that serves as customer first name.
-- LastName: A string that serves as customer last name.
-- Email: A string that serves as customer email address.
-- CustomerTypeId: A Guid and foreign key that establishes its relationship with CustomerType table.
+- Id:  **A Guid that serves as primary key.**
+- FirstName:  **A string that serves as customer first name.**
+- LastName:  **A string that serves as customer last name.**
+- Email:  **A string that serves as customer email address.**
+- CustomerTypeId:  **A Guid and foreign key that establishes its relationship with CustomerType table.**
 
 ### CustomerType Table
 The CustomerType table comprises of the following entities
-- Id: A Guid that serves as primary key.
-- Name: A String that serves as the name
+- Id:  **A Guid that serves as primary key.**
+- Name:  **A String that serves as the name**
 
 For the purpose of this challenge, four (4) specific CustomerType was used which are described below:
-1. Affiliate - Individuals with a percentage dicount of 10%
-2. Employee  - Individuals with a percentage discount of 30%
-3. OldCustomers - Customers above 2 years with a percentage discount of 5%
-4. NewCustomers - Customers below 2 years, having a discount of $5 on every $100.
+1. Affiliate -  **Individuals with a percentage dicount of 10%**
+2. Employee  -  **Individuals with a percentage discount of 30%**
+3. OldCustomers -  **Customers above 2 years with a percentage discount of 5%**
+4. NewCustomers -  **Customers below 2 years, having a discount of $5 on every $100.**
 
 ### Discount Table
 The discount table comprises of the following entities
-- Id: A Guid that serves as primary key.
-- Key: A string whose value serves as a customerType identifier e.g 'Affiliate'.
-- Value: A decimal that serves as the actual dicount.
-- IsPercent: A boolean that indicate if its percentage based.
-- IsFixed: A boolean that indicate if its fixed based.
-- CustomerTypeId: A Guid and foreign key that establishes its relationship with CustomerType table.
+- Id:  **A Guid that serves as primary key.**
+- Key:  **A string whose value serves as a customerType identifier e.g 'Affiliate'.**
+- Value:  **A decimal that serves as the actual dicount.**
+- IsPercent:  **A boolean that indicate if its percentage based.**
+- IsFixed:  **A boolean that indicate if its fixed based.**
+- CustomerTypeId:  **A Guid and foreign key that establishes its relationship with CustomerType table.**
 
-Note: The discount relationship with customerType ensures a customer is entitled to only one dicount. 
+Note: **The discount relationship with customerType ensures a customer is entitled to only one dicount.** 
 
 ### Invoice Table
 The discount table comprises of the following entities
-- Id: A Guid that serves as primary key.
-- CustomerTypeId: A Guid and foreign key that establishes its relationship with CustomerType table.
-- TotalAmount: A double that serves as the bill amount.
-- TotalInvoiceAmount: A double that serves as the total invoice amount calculated using customer discount.  
+- Id:  **A Guid that serves as primary key.**
+- CustomerTypeId:  **A Guid and foreign key that establishes its relationship with CustomerType table.**
+- TotalAmount:  **A double that serves as the bill amount.**
+- TotalInvoiceAmount:  **A double that serves as the total invoice amount calculated using customer discount.**
 
 ## How to generate Invoice and get Total Amount Given a bill
 - The GenerateInvoice Api is used to generate an invoice and get the total invoice amount given a bill amount e.g $1000.
