@@ -74,7 +74,7 @@ Note: The discount relationship with customerType ensures a customer is entitled
 The discount table comprises of the following entities
 - Id: A Guid that serves as primary key.
 - CustomerTypeId: A Guid and foreign key that establishes its relationship with CustomerType table.
-- TotalAmount: A double that serves as the bill amount
+- TotalAmount: A double that serves as the bill amount.
 - TotalInvoiceAmount: A double that serves as the total invoice amount calculated using customer discount.  
 
 # Get Total Invoice Amount Given A Bill And Generate Invoice
@@ -87,7 +87,7 @@ Note:
 
 # Code Base and Structure
 - All interfaces are located in the services folder.
-- Implementations are located in the repository folder.
+- Implementations and abstract classes are located in the repository folder.
 - Database Context are located in the data folder.
 - Utility classes and hard codes are located in the HardCodes folder
 
