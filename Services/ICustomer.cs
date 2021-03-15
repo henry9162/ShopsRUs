@@ -1,15 +1,16 @@
-﻿using ShopsRUs.Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using ShopsRUs.Model;
 using ShopsRUs.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace ShopsRUs.Data
+namespace ShopsRUs.Services
 {
     public interface ICustomer
     {
-        Task<List<Customer>> GetAllCustomer();
+        Task<IEnumerable<Customer>> GetAllCustomer();
         Task<Customer> GetCustomerById(Guid id);
         Task<Customer> GetCustomerByName(String name);
         Task<Customer> createCustomer(CustomerDTO customer);

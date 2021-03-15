@@ -22,14 +22,12 @@ namespace ShopsRUs.Controllers
             _context = context;
         }
 
-        // GET: api/CustomerTypes
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CustomerType>>> GetCustomerType()
         {
             return await _context.CustomerType.ToListAsync();
         }
 
-        // GET: api/CustomerTypes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<CustomerType>> GetCustomerType(Guid id)
         {
@@ -43,9 +41,6 @@ namespace ShopsRUs.Controllers
             return customerType;
         }
 
-        // PUT: api/CustomerTypes/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomerType(Guid id, CustomerTypeDTO customerType)
         {
@@ -57,8 +52,6 @@ namespace ShopsRUs.Controllers
 
             type.Name = customerType.Name;
             _context.Update(type);
-
-            //_context.Entry(customerType).State = EntityState.Modified;
 
             try
             {
@@ -79,9 +72,6 @@ namespace ShopsRUs.Controllers
             return NoContent();
         }
 
-        // POST: api/CustomerTypes
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
         public async Task<ActionResult<CustomerType>> PostCustomerType(CustomerTypeDTO customerType)
         {
@@ -95,7 +85,6 @@ namespace ShopsRUs.Controllers
             return CreatedAtAction("GetCustomerType", new { id = type.Id }, type);
         }
 
-        // DELETE: api/CustomerTypes/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<CustomerType>> DeleteCustomerType(Guid id)
         {

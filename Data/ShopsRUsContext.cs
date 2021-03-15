@@ -22,13 +22,5 @@ namespace ShopsRUs.Data
 
         public DbSet<ShopsRUs.Model.CustomerType> CustomerType { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<CustomerType>().HasData(
-                new CustomerType { Id = new Guid("42597c90-ad38-42e3-9423-6180735a0895"), Name = "Affiliate" },
-                new CustomerType { Id = new Guid("1c8ac228-5531-44fc-8f32-b3ae9feb2ce6"), Name = "Employee" },
-                new CustomerType { Id = new Guid("a97c408a-7991-412b-b686-8cf2cdfd9b7c"), Name = "Customer" }
-            );
-        }
     }
 }

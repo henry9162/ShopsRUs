@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,6 +9,8 @@ namespace ShopsRUs.ViewModel
 {
     public class CustomerDTO
     {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+
         [Required(ErrorMessage = "First Name is required")]
         public string FirstName { set; get; }
 
@@ -23,8 +26,8 @@ namespace ShopsRUs.ViewModel
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
-        public Guid CUstomerTypeID { get; set; }
 
-        //public DateTime DateCreated { get; set; }
+        [Required(ErrorMessage = "CustomerTypeId is required")]
+        public Guid CUstomerTypeID { get; set; }
     }
 }

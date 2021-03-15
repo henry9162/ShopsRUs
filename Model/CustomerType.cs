@@ -10,7 +10,7 @@ namespace ShopsRUs.Model
     public class CustomerType
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Key]
+  
         public Guid Id { set; get; }
 
         [Required(ErrorMessage = "Name is required")]

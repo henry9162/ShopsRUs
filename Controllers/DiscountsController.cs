@@ -7,138 +7,125 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ShopsRUs.Data;
 using ShopsRUs.Model;
+using ShopsRUs.Services;
 using ShopsRUs.ViewModel;
+using static ShopsRUs.CommonClasses.HardCodes;
 
 namespace ShopsRUs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class DiscountsController : ControllerBase
+    public class DiscountsController : BaseController
     {
-        private readonly ShopsRUsContext _context;
+        private readonly IDiscount _repo;
 
-        public DiscountsController(ShopsRUsContext context)
+        public DiscountsController(IDiscount repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        // GET: api/Discounts
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Discount>>> GetDiscount()
+        [HttpGet("GetAllDiscounts")]
+        public async Task<ActionResult<Discount>> GetDiscount()
         {
-            return await _context.Discount.ToListAsync();
+            var discounts =  await _repo.GetAllDiscount();
+            return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retreived record successfully", discounts));
         }
 
-        // GET: api/Discounts/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Discount>> GetDiscount(Guid id)
         {
-            var discount = await _context.Discount.FindAsync(id);
-
-            if (discount == null)
+            try
             {
-                return NotFound();
-            }
+                var discount = await _repo.GetDiscountById(id);
 
-            return discount;
+                if (discount != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", discount));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
         }
 
-        [HttpGet("getDiscountByType/{id}")]
+        [HttpGet("getDiscountPercentageByType/{id}")]
         public async Task<ActionResult<Discount>> GetDiscountByType(Guid id)
         {
-            var discount = await _context.Discount.Where(d=>d.CustomerTypeId == id).FirstOrDefaultAsync();
-
-            if (discount == null)
+            try
             {
-                return NotFound();
-            }
+                var discount = await _repo.GetDiscountByType(id);
 
-            return discount;
+                if (discount != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", discount));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
         }
 
-        // PUT: api/Discounts/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
         public async Task<IActionResult> PutDiscount(Guid id, DiscountDTO discount)
         {
-            var updatedDiscount = await _context.Discount.FindAsync(id);
-            if (updatedDiscount == null)
-            {
-                return BadRequest();
-            }
-
-            updatedDiscount.CustomerTypeId = discount.CustomerTypeId;
-            updatedDiscount.Description = discount.Description;
-            updatedDiscount.CustomerorBIllType = discount.CustomerorBIllType;
-            updatedDiscount.Key = discount.Key;
-            updatedDiscount.Value = discount.Value;
-            updatedDiscount.PercentOrFixed = discount.PercentOrFixed;
-
-            _context.Update(updatedDiscount);
-
-            //_context.Entry(discount).State = EntityState.Modified;
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DiscountExists(id))
-                {
-                    return NotFound();
-                }
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var updatedDiscount = await _repo.UpdateDiscount(id, discount);
+
+                if (updatedDiscount != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Updated record successfully", updatedDiscount));
                 else
-                {
-                    throw;
-                }
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Could nnot retrive record"));
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Discounts
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for
-        // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-        [HttpPost]
-        public async Task<ActionResult<Discount>> PostDiscount(DiscountDTO discount)
-        {
-            var newDiscount = new Discount()
+            catch (Exception ex)
             {
-                CustomerTypeId = discount.CustomerTypeId,
-                Key = discount.Key,
-                Value = discount.Value,
-                PercentOrFixed = discount.PercentOrFixed,
-                CustomerorBIllType = discount.CustomerorBIllType,
-                Description = discount.Description
-            };
-
-            _context.Discount.Add(newDiscount);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetDiscount", new { id = newDiscount.Id }, newDiscount);
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
         }
 
-        // DELETE: api/Discounts/5
+        [HttpPost]
+        public async Task<ActionResult<Discount>> PostDiscount(DiscountDTO dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var discount = await _repo.createDiscount(dto);
+
+                if (discount != null)
+                    return Ok(BindOutput(StatusCodes.Status201Created, RequestState.Success, "Retreived Successfuly", discount));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<Discount>> DeleteDiscount(Guid id)
         {
-            var discount = await _context.Discount.FindAsync(id);
-            if (discount == null)
+            try
             {
-                return NotFound();
+                var discount = await _repo.deleteDiscount(id);
+                if (discount != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Deleted record successfully"));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Could not retrieve record"));
+
+
             }
-
-            _context.Discount.Remove(discount);
-            await _context.SaveChangesAsync();
-
-            return Ok("Deleted discount successfully");
-        }
-
-        private bool DiscountExists(Guid id)
-        {
-            return _context.Discount.Any(e => e.Id == id);
+            catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
         }
     }
 }

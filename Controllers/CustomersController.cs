@@ -1,141 +1,132 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using ShopsRUs.Data;
 using ShopsRUs.Model;
+using ShopsRUs.Services;
 using ShopsRUs.ViewModel;
+using static ShopsRUs.CommonClasses.HardCodes;
 
 namespace ShopsRUs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class CustomersController : ControllerBase
+    public class CustomersController : BaseController
     {
-        private readonly ShopsRUsContext _context;
+        private readonly ICustomer _repo;
 
-        public CustomersController(ShopsRUsContext context)
+        public CustomersController(ICustomer repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
-        // GET: api/Customers
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Customer>>> GetCustomer()
+        [HttpGet("GetAllCustomers")]
+        public async Task<ActionResult<Customer>> GetCustomer()
         {
-            return await _context.Customer.Include(s => s.CustomerType).ToListAsync();
+            var customers =  await _repo.GetAllCustomer();
+            return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", customers));
         }
 
-        // GET: api/Customers/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Customer>> GetCustomer(Guid id)
         {
-            var customer = await _context.Customer.FindAsync(id);
-
-            if (customer == null)
+            try
             {
-                return NotFound();
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+                var customer = await _repo.GetCustomerById(id);
 
-            return customer;
+                if (customer != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", customer));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            } catch(Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
+            
         }
 
-        // GET: api/Customers/5
         [HttpGet("getCustomerByName/{name}")]
         public async Task<ActionResult<Customer>> GetCustomer(String name)
         {
-            var customer = await _context.Customer.Where(c=>c.FirstName.ToLower() == name || c.LastName.ToLower() == name ).FirstOrDefaultAsync();
-
-            if (customer == null)
-            {
-                return NotFound();
-            }
-
-            return customer;
-        }
-
-        // PUT: api/Customers/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutCustomer(Guid id, CustomerDTO customer)
-        {
-            var customerExist = await _context.Customer.Where(c => c.Id == id).FirstOrDefaultAsync();
-
-            if (customerExist == null)
-            {
-                return BadRequest();
-            }
-
-            customerExist.FirstName = customer.FirstName;
-            customerExist.LastName = customer.LastName;
-            customerExist.Email = customer.Email;
-            customerExist.Address = customer.Address;
-            customerExist.Phone = customer.Phone;
-            customerExist.CUstomerTypeID = customer.CUstomerTypeID;
-
-            _context.Update(customerExist);
-
             try
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!CustomerExists(id))
-                {
-                    return NotFound();
-                }
+                var customer = await _repo.GetCustomerByName(name);
+
+                if (customer != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", customer));
                 else
-                {
-                    throw;
-                }
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
             }
-
-            return NoContent();
-        }
-
-        // POST: api/Customers
-        [HttpPost]
-        public async Task<ActionResult<Customer>> PostCustomer(CustomerDTO dto)
-        {
-            var customer = new Customer()
+            catch (Exception ex)
             {
-                Address = dto.Address,
-                CUstomerTypeID = dto.CUstomerTypeID,
-                DateCreated = DateTime.Now,
-                Email = dto.Email,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                Phone = dto.Phone
-            };
-
-            _context.Customer.Add(customer);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetCustomer", new { id = customer.Id }, customer);
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
         }
 
-        // DELETE: api/Customers/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateCustomer(Guid id, CustomerDTO customer)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+                
+                var updatedCustomer = await _repo.UpdateCustomer(id, customer);
+
+                if (updatedCustomer != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Updated record successfully", updatedCustomer));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Could nnot retrive record"));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
+            
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostCustomer(CustomerDTO dto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var customer = await _repo.createCustomer(dto);
+
+                if (customer != null)
+                    return Ok(BindOutput(StatusCodes.Status201Created, RequestState.Success, "Retreived Successfuly", customer));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
+        }
+
         [HttpDelete("{id}")]
         public async Task<ActionResult<Customer>> DeleteCustomer(Guid id)
         {
-            var customer = await _context.Customer.FindAsync(id);
-            if (customer == null)
+            try
             {
-                return NotFound();
+                var customer = await _repo.deleteCustomer(id);
+                if (customer != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Deleted record successfully"));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Could not retrieve record"));
+                
+
+            } catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
             }
-
-            _context.Customer.Remove(customer);
-            await _context.SaveChangesAsync();
-
-            return Ok("Successfully deleted customer");
-        }
-
-        private bool CustomerExists(Guid id)
-        {
-            return _context.Customer.Any(e => e.Id == id);
         }
     }
 }

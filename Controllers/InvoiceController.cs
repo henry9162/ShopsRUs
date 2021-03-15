@@ -8,25 +8,60 @@ using Microsoft.EntityFrameworkCore;
 using ShopsRUs.CommonClasses;
 using ShopsRUs.Data;
 using ShopsRUs.Model;
+using ShopsRUs.Services;
 using ShopsRUs.ViewModel;
+using static ShopsRUs.CommonClasses.HardCodes;
 
 namespace ShopsRUs.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class InvoiceController : ControllerBase
+    public class InvoiceController : BaseController
     {
-        private readonly ShopsRUsContext _context;
+        private readonly IInvoice _repo;
 
-        public InvoiceController(ShopsRUsContext context)
+        public InvoiceController(IInvoice repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<Invoice>> GetAllInvoice()
+        {
+            var invoices =  await _repo.GetAllInvoice();
 
-        // GET: api/Invoices/5
-        [HttpPost("GetTotalInvoiceAmount")]
-        public async Task<IActionResult> GetTotalInvoiceAmount(InvoiceDTO Bill)
+            return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", invoices));
+        }
+
+        [HttpGet("GetInvoiceByCustomerId/{id}")]
+        public async Task<ActionResult<Invoice>> GetInvoiceByCustomerId(Guid id)
+        {
+            var invoices = await _repo.GetInvoiceByCustomerId(id);
+
+            return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", invoices));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Invoice>> GetInvoiceById(Guid id)
+        {
+            try
+            {
+                var invoice = await _repo.GetInvoiceById(id);
+
+                if (invoice != null)
+                    return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrived record successfully", invoice));
+                else
+                    return NotFound(BindOutput(StatusCodes.Status404NotFound, RequestState.Failed, "Unable to retrieve record"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(BindOutput(StatusCodes.Status400BadRequest, RequestState.Error, ex.Message));
+            }
+
+        }
+
+        [HttpPost("GenerateInvoice")]
+        public async Task<IActionResult> GenerateInvoice(InvoiceDTO Bill)
         {
             try
             {
@@ -34,37 +69,10 @@ namespace ShopsRUs.Controllers
                 {
                     return BadRequest("CustomerId and amount cannot be empty");
                 }
-                //use customer type to get the discount by customer
-                var customerDetails = await _context.Customer.Include(s => s.CustomerType).Where(x => x.Id == Bill.CustomerId).FirstOrDefaultAsync();
-                if (customerDetails != null)
-                {
-                    var discount =  _context.Discount.Where(c => c.CustomerTypeId == customerDetails.CUstomerTypeID).FirstOrDefault();
 
-                    if (discount != null)
-                    {
-                        var balanceDue = 0.0m;
-                        //if the customer has spent upto 2 years
-                        if ((customerDetails.CustomerType.Name == HardCodes.CustomerTypeCodes.Customer && customerDetails.DateCreated.AddYears(2) <= DateTime.Now)
-                            || (customerDetails.CustomerType.Name == HardCodes.CustomerTypeCodes.Affiliate)
-                            || (customerDetails.CustomerType.Name == HardCodes.CustomerTypeCodes.Employee))
-                        {
-                            balanceDue = Bill.TotalAmount - (discount.Value * Bill.TotalAmount);
+                var invoice = await _repo.GenerateInvoice(Bill);
 
-                            return Ok(balanceDue);
-                        }
-                        else
-                        {
-                            discount =  _context.Discount.Where(s => s.CustomerTypeId == null).FirstOrDefault();
-                            int amount = (int)(Bill.TotalAmount / Convert.ToDecimal(discount.Key));
-                            balanceDue = Bill.TotalAmount - ((discount.Value * amount));
-
-                            return Ok(balanceDue);
-
-                        }
-                    }
-                }
-
-                return Ok(Bill.TotalAmount);
+                return Ok(BindOutput(StatusCodes.Status200OK, RequestState.Success, "Retrieved record successfully", invoice));
 
             }
             catch (Exception ex)

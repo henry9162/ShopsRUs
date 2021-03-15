@@ -27,6 +27,7 @@ namespace ShopsRUs.Model
         [Required(ErrorMessage = "Email is required")]
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
+        [Required(ErrorMessage = "CustomerType is Required")]
         public Guid CUstomerTypeID { get; set; }
         public CustomerType CustomerType { get; set; }
 

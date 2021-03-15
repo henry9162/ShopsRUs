@@ -12,7 +12,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ShopsRUs.Data;
-using ShopsRUs.Data.Implementation;
+using ShopsRUs.Services;
+using ShopsRUs.Repositories;
 
 namespace ShopsRUs
 {
@@ -30,10 +31,13 @@ namespace ShopsRUs
         {
             services.AddControllers();
             services.AddSwaggerGen();
-            services.AddScoped<ICustomer, MockICustomer>();
 
             services.AddDbContext<ShopsRUsContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ShopsRUsContext")));
+
+            services.AddScoped<ICustomer, MockICustomer>();
+            services.AddScoped<IDiscount, MockIDiscount>();
+            services.AddScoped<IInvoice, MockIInvoice>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

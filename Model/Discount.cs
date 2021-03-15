@@ -25,13 +25,14 @@ namespace ShopsRUs.Model
         [Required(ErrorMessage = "Value is required")]
         public decimal Value { get; set; }
 
-        [Required(ErrorMessage = "PercentOrFixed is required")]
-        public bool PercentOrFixed { get; set; }
+        [Required(ErrorMessage = "IsPercent is required")]
+        public bool IsPercent { get; set; }
 
+        [Required(ErrorMessage = "IsFixed is required")]
+        public bool IsFixed { get; set; }
+
+        [Required(ErrorMessage = "Description is required")]
         public string Description { get; set; }
-
-        [Required]
-        public bool CustomerorBIllType { get; set; }
 
         public DateTime DateCreated { get; set; }
     }
